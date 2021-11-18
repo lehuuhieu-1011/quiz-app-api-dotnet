@@ -53,11 +53,7 @@ namespace quiz_app_dotnet_api.Controllers
             {
                 return BadRequest();
             }
-            bool check = await _service.UpdateQuestion(id, question);
-            if (!check)
-            {
-                return BadRequest();
-            }
+            await _service.UpdateQuestion(question);
             return NoContent();
         }
 

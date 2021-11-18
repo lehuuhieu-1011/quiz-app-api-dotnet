@@ -46,7 +46,7 @@ namespace quiz_app_dotnet_api.Repositories
 
         public QuestionQuiz GetById(int id)
         {
-            QuestionQuiz question = _context.QuestionQuizs.Include(q => q.course).Where(q => q.id == id).FirstOrDefault();
+            QuestionQuiz question = _context.QuestionQuizs.Include(q => q.course).FirstOrDefault(q => q.id == id);
             if (question == null)
             {
                 return null;
@@ -54,13 +54,17 @@ namespace quiz_app_dotnet_api.Repositories
             return question;
         }
 
-        public async Task<bool> UpdateQuestion(int id, QuestionQuiz newQuestion)
+        public async Task<bool> UpdateQuestion(QuestionQuiz newQuestion)
         {
-            QuestionQuiz question = await _context.QuestionQuizs.FindAsync(id);
+            // _context.QuestionQuizs.Update(newQuestion);
+            // await _context.SaveChangesAsync();
+            // return true;
+            var question = await _context.QuestionQuizs.FindAsync(newQuestion.id);
             if (question == null)
             {
                 return false;
             }
+
             _context.QuestionQuizs.Update(newQuestion);
             await _context.SaveChangesAsync();
             return true;

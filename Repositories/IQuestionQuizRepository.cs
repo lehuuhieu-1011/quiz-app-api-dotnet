@@ -11,7 +11,7 @@ namespace quiz_app_dotnet_api.Repositories
         Task<List<QuestionQuiz>> GetAll();
         QuestionQuiz GetById(int id);
         Task<QuestionQuiz> CreateQuestion(QuestionQuiz question);
-        Task<bool> UpdateQuestion(int id, QuestionQuiz question);
+        Task<bool> UpdateQuestion(QuestionQuiz question);
         Task<bool> DeleteQuestion(int id);
 
     }

@@ -32,9 +32,9 @@ namespace quiz_app_dotnet_api.Services
             return await _repo.CreateQuestion(question);
         }
 
-        public async Task<bool> UpdateQuestion(int id, QuestionQuiz question)
+        public async Task<bool> UpdateQuestion(QuestionQuiz question)
         {
-            return await _repo.UpdateQuestion(id, question);
+            return await _repo.UpdateQuestion(question);
         }
 
         public async Task<bool> DeleteQuestion(int id)
