@@ -34,6 +34,5 @@ namespace quiz_app_dotnet_api.Entities
         [Column("course_id")]
         public int courseId { get; set; }
         public CourseQuiz course { get; set; }
-
     }
 }

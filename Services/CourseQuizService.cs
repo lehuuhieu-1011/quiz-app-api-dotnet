@@ -10,36 +10,36 @@ namespace quiz_app_dotnet_api.Services
 {
     public class CourseQuizService
     {
-        private readonly ICourseQuizRepository<CourseQuiz> _courseQuiz;
+        private readonly ICourseQuizRepository<CourseQuiz> _repo;
 
-        public CourseQuizService(ICourseQuizRepository<CourseQuiz> courseQuiz)
+        public CourseQuizService(ICourseQuizRepository<CourseQuiz> repo)
         {
-            _courseQuiz = courseQuiz;
+            _repo = repo;
         }
 
         public List<CourseQuiz> GetAll()
         {
-            return _courseQuiz.GetAll().ToList();
+            return _repo.GetAll().ToList();
         }
 
         public async Task<CourseQuiz> GetById(int id)
         {
-            return await _courseQuiz.GetById(id);
+            return await _repo.GetById(id);
         }
 
         public async Task<CourseQuiz> CreateCourse(CourseQuiz course)
         {
-            return await _courseQuiz.CreateCourse(course);
+            return await _repo.CreateCourse(course);
         }
 
         public async Task UpdateCourse(CourseQuiz newCourse)
         {
-            await _courseQuiz.UpdateCourse(newCourse);
+            await _repo.UpdateCourse(newCourse);
         }
 
         public async Task<bool> DeleteCourse(int id)
         {
-            return await _courseQuiz.DeleteCourse(id);
+            return await _repo.DeleteCourse(id);
         }
 
     }

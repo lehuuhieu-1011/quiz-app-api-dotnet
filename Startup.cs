@@ -40,6 +40,8 @@ namespace quiz_app_dotnet_api
             services.AddDbContext<DataContext>(options => options.UseSqlServer(_config.GetConnectionString("DbConnection")));
             services.AddTransient<ICourseQuizRepository<CourseQuiz>, CourseQuizRepository>();
             services.AddTransient<CourseQuizService, CourseQuizService>();
+            services.AddTransient<IQuestionQuizRepository<QuestionQuiz>, QuestionQuizRepository>();
+            services.AddTransient<QuestionQuizService, QuestionQuizService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
