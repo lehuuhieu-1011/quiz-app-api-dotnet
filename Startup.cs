@@ -1,10 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization.Formatters;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Components.Server;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -42,6 +45,35 @@ namespace quiz_app_dotnet_api
             services.AddTransient<CourseQuizService, CourseQuizService>();
             services.AddTransient<IQuestionQuizRepository<QuestionQuiz>, QuestionQuizRepository>();
             services.AddTransient<QuestionQuizService, QuestionQuizService>();
+            services.AddIdentity<User, IdentityRole>()
+                .AddEntityFrameworkStores<DataContext>()
+                .AddDefaultTokenProviders();
+
+            // truy cap IdentityOptions
+            services.Configure<IdentityOptions>(options =>
+            {
+                // thiet lap ve password
+                options.Password.RequireDigit = false; //khong bat buoc phai co so
+                options.Password.RequireLowercase = false; // khong bat buoc phai co chu thuong
+                options.Password.RequireNonAlphanumeric = false; // khong bat ky tu dat biet
+                options.Password.RequireUppercase = false; // khong bat buoc chu in
+                options.Password.RequiredLength = 6; // so ky tu toi thieu cua password
+                options.Password.RequiredUniqueChars = 1; // so ky tu rieng biet
+
+                // cau hinh lockout - khoa user
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5); // khoa 5p
+                options.Lockout.MaxFailedAccessAttempts = 5; // that bai 5 lan thi khoa
+                options.Lockout.AllowedForNewUsers = true;
+
+                // cau hinh ve User
+                options.User.AllowedUserNameCharacters = // cac ky tu dat ten User
+                    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+                options.User.RequireUniqueEmail = true; // email la duy nhat
+
+                // cau hinh dang nhap
+                options.SignIn.RequireConfirmedEmail = true; // cau hinh xac thuc dia chi email (email phai ton tai)
+                options.SignIn.RequireConfirmedPhoneNumber = false; // xac thuc so dien thoai                    
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -64,6 +96,11 @@ namespace quiz_app_dotnet_api
             {
                 endpoints.MapControllers();
             });
+
+            // phuc hoi thong tin dang nhap (xac thuc)
+            app.UseAuthentication();
+            // phuc hoi thong tin ve quyen cua User
+            app.UseAuthorization();
         }
     }
 }
