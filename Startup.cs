@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Components.Server;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -15,8 +16,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using MimeKit.Cryptography;
 using quiz_app_dotnet_api.Data;
 using quiz_app_dotnet_api.Entities;
+using quiz_app_dotnet_api.Mail;
 using quiz_app_dotnet_api.Repositories;
 using quiz_app_dotnet_api.Services;
 
@@ -74,6 +77,10 @@ namespace quiz_app_dotnet_api
                 options.SignIn.RequireConfirmedEmail = true; // cau hinh xac thuc dia chi email (email phai ton tai)
                 options.SignIn.RequireConfirmedPhoneNumber = false; // xac thuc so dien thoai                    
             });
+
+            services.AddOptions(); // kich hoat options
+            services.Configure<MailSettings>(_config.GetSection("MailSettings")); // dki de inject
+            services.AddTransient<IEmailSender, SendMailService>(); // dki dich vu mail
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
