@@ -78,9 +78,13 @@ namespace quiz_app_dotnet_api
                 options.SignIn.RequireConfirmedPhoneNumber = false; // xac thuc so dien thoai                    
             });
 
+
             services.AddOptions(); // kich hoat options
             services.Configure<MailSettings>(_config.GetSection("MailSettings")); // dki de inject
             services.AddTransient<IEmailSender, SendMailService>(); // dki dich vu mail
+
+            // enable cors
+            services.AddCors(options => options.AddPolicy("AllowAll", p => p.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -93,11 +97,15 @@ namespace quiz_app_dotnet_api
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "quiz_app_dotnet_api v1"));
             }
 
+
             app.UseHttpsRedirection();
 
             app.UseRouting();
 
-            app.UseAuthorization();
+            // enable cors
+            app.UseCors("AllowAll");
+
+            // app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
@@ -108,6 +116,8 @@ namespace quiz_app_dotnet_api
             app.UseAuthentication();
             // phuc hoi thong tin ve quyen cua User
             app.UseAuthorization();
+
+            app.UseCors(options => options.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
         }
     }
 }
