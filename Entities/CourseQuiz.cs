@@ -16,6 +16,8 @@ namespace quiz_app_dotnet_api.Entities
         public int Id { get; set; }
         [Column("name")]
         public string name { get; set; }
+        [Column("image")]
+        public string image { get; set; }
         // public virtual ICollection<QuestionQuiz> QuestionQuiz { get; set; }
     }
 }

@@ -29,6 +29,8 @@ namespace quiz_app_dotnet_api.Entities
         public string answerD { get; set; }
         [Column("correct_answer")]
         public string correctAnswer { get; set; }
+        [Column("image")]
+        public string image { get; set; }
         [Column("point")]
         public float point { get; set; }
         [Column("course_id")]
