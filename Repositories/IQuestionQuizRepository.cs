@@ -9,6 +9,7 @@ namespace quiz_app_dotnet_api.Repositories
     public interface IQuestionQuizRepository<T>
     {
         Task<List<QuestionQuiz>> GetAll();
+        Task<List<QuestionQuiz>> GetQuestionByIdCourse(int id);
         QuestionQuiz GetById(int id);
         Task<QuestionQuiz> CreateQuestion(QuestionQuiz question);
         Task<bool> UpdateQuestion(QuestionQuiz question);

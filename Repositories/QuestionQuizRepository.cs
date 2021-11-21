@@ -54,6 +54,16 @@ namespace quiz_app_dotnet_api.Repositories
             return question;
         }
 
+        public async Task<List<QuestionQuiz>> GetQuestionByIdCourse(int id)
+        {
+            List<QuestionQuiz> questions = await _context.QuestionQuizs.Include(q => q.course).Where(q => q.course.Id == id).ToListAsync();
+            if (questions == null)
+            {
+                return null;
+            }
+            return questions;
+        }
+
         public async Task<bool> UpdateQuestion(QuestionQuiz newQuestion)
         {
             // _context.QuestionQuizs.Update(newQuestion);

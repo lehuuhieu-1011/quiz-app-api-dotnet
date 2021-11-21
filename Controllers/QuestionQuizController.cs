@@ -68,6 +68,17 @@ namespace quiz_app_dotnet_api.Controllers
             return NoContent();
         }
 
+        [HttpGet("/api/GetAllQuestionByIdCourse/{id}")]
+        public async Task<ActionResult<List<QuestionQuiz>>> GetQuestionByIdCourse(int id)
+        {
+            List<QuestionQuiz> questions = await _service.GetQuestionByIdCourse(id);
+            if (questions == null)
+            {
+                return BadRequest();
+            }
+            return questions;
+        }
+
 
     }
 }

@@ -41,5 +41,10 @@ namespace quiz_app_dotnet_api.Services
         {
             return await _repo.DeleteQuestion(id);
         }
+
+        public async Task<List<QuestionQuiz>> GetQuestionByIdCourse(int id)
+        {
+            return await _repo.GetQuestionByIdCourse(id);
+        }
     }
 }
