@@ -10,97 +10,52 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
-using quiz_app_dotnet_api.Dtos;
+using quiz_app_dotnet_api.Modals;
 using quiz_app_dotnet_api.Entities;
+using quiz_app_dotnet_api.Services;
+using quiz_app_dotnet_api.Repositories;
 
 namespace quiz_app_dotnet_api.Controllers
 {
     public class UserController : BaseApiController
     {
-        private readonly SignInManager<User> _signInManager;
-        private readonly UserManager<User> _userManager;
-        private readonly ILogger<RegisterDto> _logger;
-        // private readonly IEmailSender _emailSender;
+        private readonly UserService _service;
+        private readonly IUserRepository<User> _repo;
 
-
-        // cac service duoc inject vao: UserManager, SignInManager, ILogger, IEmailSender
-        // public UserController(UserManager<User> userManager, SignInManager<User> signInManager, ILogger<RegisterDto> logger, IEmailSender emailSender)
-        // {
-        //     _userManager = userManager;
-        //     _signInManager = signInManager;
-        //     _logger = logger;
-        //     _emailSender = emailSender;
-        // }
-
-        public UserController(UserManager<User> userManager, SignInManager<User> signInManager, ILogger<RegisterDto> logger)
+        public UserController(UserService service, IUserRepository<User> repo)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
-            _logger = logger;
+            _service = service;
+            _repo = repo;
         }
 
-        // [Route("{id}")]
-        // [HttpGet]
-        // public async Task<User> GetById(string id)
-        // {
-        //     var user = await _userManager.FindByIdAsync(id);
-        //     return user;
-        // }
+        [HttpGet("{username}")]
+        public async Task<User> GetByUsername(string username)
+        {
+            return await _service.GetByUsername(username);
+        }
 
         [Route("Register")]
         [HttpPost]
-        public async Task<IActionResult> Register(RegisterDto registerDto)
+        public async Task<IActionResult> Register(RegisterModal registerModal)
         {
-            var user = new User { UserName = registerDto.Username, Email = registerDto.Email, EmailConfirmed = true };
-
-            var result = await _userManager.CreateAsync(user, registerDto.Password);
-            var errorMessage = new ErrorDto { Message = "" };
-            foreach (var error in result.Errors)
+            var response = await _service.Register(registerModal);
+            if (response == null)
             {
-                errorMessage.Message += error.Description + " ";
-                _logger.LogError(error.Description);
+                return CreatedAtAction(nameof(GetByUsername), new { username = registerModal.Username }, registerModal);
             }
-            if (result.Succeeded)
-            {
-                _logger.LogInformation("Create user succesfully");
-                // var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                // code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-
-                // return CreatedAtAction(nameof(GetById), new User{Id = });
-                return NoContent();
-            }
-
-            return BadRequest(errorMessage);
+            return BadRequest(response);
         }
 
         [Route("Login")]
         [HttpPost]
-        public async Task<ActionResult> Login(LoginDto loginDto)
+        public async Task<ActionResult> Login(LoginModal loginModal)
         {
-            // login bang username
-            var result = await _signInManager.PasswordSignInAsync(loginDto.UsernameOrEmail, loginDto.Password, false, false);
-            var errorMessage = new ErrorDto { Message = "" };
-
-            if (!result.Succeeded)
+            var response = await _service.Login(loginModal);
+            if (response == null)
             {
-                // that bai khi login bang username va password -> tim user theo email, neu thay thi thu dang nhap bang user tim duoc
-                var user = await _userManager.FindByEmailAsync(loginDto.UsernameOrEmail);
-                if (user != null)
-                {
-                    result = await _signInManager.PasswordSignInAsync(user, loginDto.Password, false, false);
-                }
-                else
-                {
-                    errorMessage.Message = "Username or Password is Invalid";
-                }
+                return BadRequest(new { message = "User name or password not correct" });
             }
-            if (result.Succeeded)
-            {
-                _logger.LogInformation("Login successfully");
-                return NoContent();
-            }
-            return BadRequest(errorMessage);
-
+            return Ok(response);
         }
     }
 }

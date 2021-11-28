@@ -10,8 +10,8 @@ using quiz_app_dotnet_api.Data;
 namespace quiz_app_dotnet_api.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20211121020751_initTable")]
-    partial class initTable
+    [Migration("20211128062146_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

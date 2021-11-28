@@ -16,10 +16,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using MimeKit.Cryptography;
 using quiz_app_dotnet_api.Data;
 using quiz_app_dotnet_api.Entities;
-using quiz_app_dotnet_api.Mail;
+using quiz_app_dotnet_api.Helper;
 using quiz_app_dotnet_api.Repositories;
 using quiz_app_dotnet_api.Services;
 
@@ -44,6 +43,9 @@ namespace quiz_app_dotnet_api
             });
 
             services.AddDbContext<DataContext>(options => options.UseSqlServer(_config.GetConnectionString("DbConnection")));
+            services.AddTransient<IUserRepository<User>, UserRepository>();
+            services.AddTransient<UserService, UserService>();
+            services.AddTransient<IJwtHelper, JwtHelper>();
             services.AddTransient<ICourseQuizRepository<CourseQuiz>, CourseQuizRepository>();
             services.AddTransient<CourseQuizService, CourseQuizService>();
             services.AddTransient<IQuestionQuizRepository<QuestionQuiz>, QuestionQuizRepository>();
@@ -71,17 +73,12 @@ namespace quiz_app_dotnet_api
                 // cau hinh ve User
                 options.User.AllowedUserNameCharacters = // cac ky tu dat ten User
                     "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
-                options.User.RequireUniqueEmail = true; // email la duy nhat
+                options.User.RequireUniqueEmail = false; // email la duy nhat
 
                 // cau hinh dang nhap
-                options.SignIn.RequireConfirmedEmail = true; // cau hinh xac thuc dia chi email (email phai ton tai)
+                options.SignIn.RequireConfirmedEmail = false; // cau hinh xac thuc dia chi email (email phai ton tai)
                 options.SignIn.RequireConfirmedPhoneNumber = false; // xac thuc so dien thoai                    
             });
-
-
-            services.AddOptions(); // kich hoat options
-            services.Configure<MailSettings>(_config.GetSection("MailSettings")); // dki de inject
-            services.AddTransient<IEmailSender, SendMailService>(); // dki dich vu mail
 
             // enable cors
             services.AddCors(options => options.AddPolicy("AllowAll", p => p.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
@@ -105,17 +102,16 @@ namespace quiz_app_dotnet_api
             // enable cors
             app.UseCors("AllowAll");
 
-            // app.UseAuthorization();
+            // phuc hoi thong tin dang nhap (xac thuc)
+            app.UseAuthentication();
+            // phuc hoi thong tin ve quyen cua User
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
 
-            // phuc hoi thong tin dang nhap (xac thuc)
-            app.UseAuthentication();
-            // phuc hoi thong tin ve quyen cua User
-            app.UseAuthorization();
 
             app.UseCors(options => options.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
         }
