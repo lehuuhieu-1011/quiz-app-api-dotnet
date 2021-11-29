@@ -2,7 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization.Formatters;
+using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components.Server;
 using Microsoft.AspNetCore.Hosting;
@@ -15,6 +18,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using quiz_app_dotnet_api.Data;
 using quiz_app_dotnet_api.Entities;
@@ -35,6 +39,20 @@ namespace quiz_app_dotnet_api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JWT:Key"]))
+                };
+            });
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
@@ -102,7 +120,7 @@ namespace quiz_app_dotnet_api
 
                 // cau hinh ve User
                 options.User.AllowedUserNameCharacters = // cac ky tu dat ten User
-                    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+                  "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
                 options.User.RequireUniqueEmail = false; // email la duy nhat
 
                 // cau hinh dang nhap
@@ -112,6 +130,8 @@ namespace quiz_app_dotnet_api
 
             // enable cors
             services.AddCors(options => options.AddPolicy("AllowAll", p => p.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -129,13 +149,14 @@ namespace quiz_app_dotnet_api
 
             app.UseRouting();
 
-            // enable cors
-            app.UseCors("AllowAll");
 
             // phuc hoi thong tin dang nhap (xac thuc)
             app.UseAuthentication();
             // phuc hoi thong tin ve quyen cua User
             app.UseAuthorization();
+
+            // enable cors
+            app.UseCors("AllowAll");
 
             app.UseEndpoints(endpoints =>
             {
@@ -143,7 +164,7 @@ namespace quiz_app_dotnet_api
             });
 
 
-            app.UseCors(options => options.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+            // app.UseCors(options => options.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
         }
     }
 }

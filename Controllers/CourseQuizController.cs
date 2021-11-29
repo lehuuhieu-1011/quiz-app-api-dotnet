@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using quiz_app_dotnet_api.Entities;
 using quiz_app_dotnet_api.Repositories;
@@ -7,6 +9,7 @@ using quiz_app_dotnet_api.Services;
 
 namespace quiz_app_dotnet_api.Controllers
 {
+    [Authorize]
     public class CourseQuizController : BaseApiController
     {
         private readonly CourseQuizService _courseQuizService;
