@@ -4,6 +4,7 @@ using System.Data.Common;
 using System.Linq;
 using System.Reflection.Metadata.Ecma335;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using quiz_app_dotnet_api.Entities;
 using quiz_app_dotnet_api.Repositories;
@@ -11,6 +12,7 @@ using quiz_app_dotnet_api.Services;
 
 namespace quiz_app_dotnet_api.Controllers
 {
+    [Authorize(Roles = "User")]
     public class QuestionQuizController : BaseApiController
     {
         private readonly QuestionQuizService _service;

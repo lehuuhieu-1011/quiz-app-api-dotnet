@@ -9,8 +9,8 @@ namespace quiz_app_dotnet_api.Repositories
 {
     public interface IUserRepository<User>
     {
-        Task<string> Register(RegisterModal user);
-        Task<UserLoginResponse> Login(LoginModal user);
-        Task<User> GetByUsername(string username);
+        Task<User> Register(RegisterModal user);
+        UserLoginResponse Login(LoginModal user);
+        User GetByUserName(string username);
     }
 }

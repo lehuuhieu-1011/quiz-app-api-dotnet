@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
+using quiz_app_dotnet_api.Data;
 using quiz_app_dotnet_api.Entities;
 using quiz_app_dotnet_api.Helper;
 using quiz_app_dotnet_api.Modals;
@@ -11,43 +12,38 @@ namespace quiz_app_dotnet_api.Repositories
 {
     public class UserRepository : IUserRepository<User>
     {
-        private readonly SignInManager<User> _signInManager;
-        private readonly UserManager<User> _userManager;
         private readonly IJwtHelper _jwtHelper;
+        private readonly DataContext _context;
 
-        public UserRepository(SignInManager<User> signInManager, UserManager<User> userManager, IJwtHelper jwtHelper)
+        public UserRepository(IJwtHelper jwtHelper, DataContext context)
         {
-            _userManager = userManager;
-            _signInManager = signInManager;
             _jwtHelper = jwtHelper;
+            _context = context;
         }
 
-        public async Task<User> GetByUsername(string username)
+        public User GetByUserName(string username)
         {
-            return await _userManager.FindByNameAsync(username);
+            User user = _context.Users.FirstOrDefault(u => u.UserName == username);
+            if (user == null)
+            {
+                return null;
+            }
+            return user;
         }
 
-        public async Task<UserLoginResponse> Login(LoginModal loginModal)
+        public UserLoginResponse Login(LoginModal loginModal)
         {
-            // login bang username
-            User user = await _userManager.FindByNameAsync(loginModal.Username);
-            var result = await _signInManager.PasswordSignInAsync(loginModal.Username, loginModal.Password, false, false);
-
-            // if (!result.Succeeded)
-            // {
-            //     // that bai khi login bang username va password -> tim user theo email, neu thay thi thu dang nhap bang user tim duoc
-            //     user = await _userManager.FindByEmailAsync(loginModal.Username);
-            //     if (user != null)
-            //     {
-            //         result = await _signInManager.PasswordSignInAsync(user, loginModal.Password, false, false);
-            //     }
-            // }
-            if (result.Succeeded)
+            User user = _context.Users.FirstOrDefault(u => u.UserName == loginModal.Username);
+            if (user == null)
+            {
+                return null;
+            }
+            if (user.Password == loginModal.Password)
             {
                 string token = _jwtHelper.generateJwtToken(user);
                 return new UserLoginResponse
                 {
-                    Id = user.Id,
+                    Id = user.Id.ToString(),
                     Username = user.UserName,
                     Token = token
                 };
@@ -55,23 +51,21 @@ namespace quiz_app_dotnet_api.Repositories
             return null;
         }
 
-        public async Task<string> Register(RegisterModal registerModal)
+        public async Task<User> Register(RegisterModal registerModal)
         {
             var user = new User
             {
-                UserName = registerModal.Username,
+                UserName = registerModal.UserName,
+                Password = registerModal.Password
             };
-            var result = await _userManager.CreateAsync(user, registerModal.Password);
-            var errorMessage = "";
-            foreach (var error in result.Errors)
-            {
-                errorMessage += error.Description + " ";
-            }
-            if (result.Succeeded)
+            bool checkUser = _context.Users.Any(u => u.UserName == registerModal.UserName);
+            if (checkUser)
             {
                 return null;
             }
-            return errorMessage;
+            await _context.Users.AddAsync(user);
+            await _context.SaveChangesAsync();
+            return user;
         }
     }
 }

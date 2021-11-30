@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
@@ -29,9 +28,14 @@ namespace quiz_app_dotnet_api.Controllers
         }
 
         [HttpGet("{username}")]
-        public async Task<User> GetByUsername(string username)
+        public IActionResult GetByUserName(string username)
         {
-            return await _service.GetByUsername(username);
+            User user = _service.GetByUserName(username);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            return Ok(user);
         }
 
         [Route("Register")]
@@ -41,16 +45,16 @@ namespace quiz_app_dotnet_api.Controllers
             var response = await _service.Register(registerModal);
             if (response == null)
             {
-                return CreatedAtAction(nameof(GetByUsername), new { username = registerModal.Username }, registerModal);
+                return BadRequest(response);
             }
-            return BadRequest(response);
+            return CreatedAtAction(nameof(GetByUserName), new { username = registerModal.UserName }, registerModal);
         }
 
         [Route("Login")]
         [HttpPost]
-        public async Task<ActionResult> Login(LoginModal loginModal)
+        public ActionResult Login(LoginModal loginModal)
         {
-            var response = await _service.Login(loginModal);
+            var response = _service.Login(loginModal);
             if (response == null)
             {
                 return BadRequest(new { message = "User name or password not correct" });

@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using quiz_app_dotnet_api.Entities;
@@ -9,9 +8,7 @@ using quiz_app_dotnet_api.Services;
 
 namespace quiz_app_dotnet_api.Controllers
 {
-    // [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    // [Authorize(AuthenticationSchemes = "Bearer")]
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class CourseQuizController : BaseApiController
     {
         private readonly CourseQuizService _courseQuizService;
@@ -22,7 +19,6 @@ namespace quiz_app_dotnet_api.Controllers
             _courseQuizService = courseQuizService;
             _courseQuiz = courseQuiz;
         }
-
         [HttpGet]
         public ActionResult<List<CourseQuiz>> GetAll()
         {
