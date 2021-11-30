@@ -9,6 +9,8 @@ using quiz_app_dotnet_api.Services;
 
 namespace quiz_app_dotnet_api.Controllers
 {
+    // [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    // [Authorize(AuthenticationSchemes = "Bearer")]
     [Authorize]
     public class CourseQuizController : BaseApiController
     {

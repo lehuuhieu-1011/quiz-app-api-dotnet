@@ -39,6 +39,8 @@ namespace quiz_app_dotnet_api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<DataContext>(options => options.UseSqlServer(_config.GetConnectionString("DbConnection")));
+
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -46,6 +48,8 @@ namespace quiz_app_dotnet_api
                 options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
             }).AddJwtBearer(options =>
             {
+                options.SaveToken = true;
+                options.RequireHttpsMetadata = false;
                 options.TokenValidationParameters = new TokenValidationParameters()
                 {
                     ValidateIssuer = false,
@@ -53,6 +57,7 @@ namespace quiz_app_dotnet_api
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JWT:Key"]))
                 };
             });
+
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
@@ -90,7 +95,6 @@ namespace quiz_app_dotnet_api
                     });
             });
 
-            services.AddDbContext<DataContext>(options => options.UseSqlServer(_config.GetConnectionString("DbConnection")));
             services.AddTransient<IUserRepository<User>, UserRepository>();
             services.AddTransient<UserService, UserService>();
             services.AddTransient<IJwtHelper, JwtHelper>();
@@ -147,8 +151,8 @@ namespace quiz_app_dotnet_api
 
             app.UseHttpsRedirection();
 
-            app.UseRouting();
 
+            app.UseRouting();
 
             // phuc hoi thong tin dang nhap (xac thuc)
             app.UseAuthentication();
