@@ -41,23 +41,6 @@ namespace quiz_app_dotnet_api
         {
             services.AddDbContext<DataContext>(options => options.UseSqlServer(_config.GetConnectionString("DbConnection")));
 
-            services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-            }).AddJwtBearer(options =>
-            {
-                options.SaveToken = true;
-                options.RequireHttpsMetadata = false;
-                options.TokenValidationParameters = new TokenValidationParameters()
-                {
-                    ValidateIssuer = false,
-                    ValidateAudience = false,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JWT:Key"]))
-                };
-            });
-
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
@@ -95,17 +78,6 @@ namespace quiz_app_dotnet_api
                     });
             });
 
-            services.AddTransient<IUserRepository<User>, UserRepository>();
-            services.AddTransient<UserService, UserService>();
-            services.AddTransient<IJwtHelper, JwtHelper>();
-            services.AddTransient<ICourseQuizRepository<CourseQuiz>, CourseQuizRepository>();
-            services.AddTransient<CourseQuizService, CourseQuizService>();
-            services.AddTransient<IQuestionQuizRepository<QuestionQuiz>, QuestionQuizRepository>();
-            services.AddTransient<QuestionQuizService, QuestionQuizService>();
-            services.AddIdentity<User, IdentityRole>()
-                .AddEntityFrameworkStores<DataContext>()
-                .AddDefaultTokenProviders();
-
             // truy cap IdentityOptions
             services.Configure<IdentityOptions>(options =>
             {
@@ -132,9 +104,36 @@ namespace quiz_app_dotnet_api
                 options.SignIn.RequireConfirmedPhoneNumber = false; // xac thuc so dien thoai                    
             });
 
+            services.AddTransient<IUserRepository<User>, UserRepository>();
+            services.AddTransient<UserService, UserService>();
+            services.AddTransient<IJwtHelper, JwtHelper>();
+            services.AddTransient<ICourseQuizRepository<CourseQuiz>, CourseQuizRepository>();
+            services.AddTransient<CourseQuizService, CourseQuizService>();
+            services.AddTransient<IQuestionQuizRepository<QuestionQuiz>, QuestionQuizRepository>();
+            services.AddTransient<QuestionQuizService, QuestionQuizService>();
+            services.AddIdentity<User, IdentityRole>()
+                .AddEntityFrameworkStores<DataContext>()
+                .AddDefaultTokenProviders();
+
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options =>
+            {
+                options.SaveToken = true;
+                options.RequireHttpsMetadata = false;
+                options.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JWT:Key"]))
+                };
+            });
+
             // enable cors
             services.AddCors(options => options.AddPolicy("AllowAll", p => p.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
-
 
         }
 
