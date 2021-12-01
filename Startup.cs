@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Runtime.Serialization.Formatters;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components.Server;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -22,6 +24,8 @@ using Microsoft.OpenApi.Models;
 using quiz_app_dotnet_api.Data;
 using quiz_app_dotnet_api.Entities;
 using quiz_app_dotnet_api.Helper;
+using quiz_app_dotnet_api.Middlewares;
+using quiz_app_dotnet_api.Modals;
 using quiz_app_dotnet_api.Repositories;
 using quiz_app_dotnet_api.Services;
 
@@ -52,6 +56,7 @@ namespace quiz_app_dotnet_api
                 options.RequireHttpsMetadata = false;
                 options.TokenValidationParameters = new TokenValidationParameters()
                 {
+                    ValidateIssuerSigningKey = true,
                     ValidateIssuer = false,
                     ValidateAudience = false,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JWT:Key"])),
@@ -147,6 +152,23 @@ namespace quiz_app_dotnet_api
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.Use(async (context, next) =>
+            {
+                await next();
+
+                if (context.Response.StatusCode == (int)HttpStatusCode.Unauthorized)
+                {
+                    var response = new ErrorModal()
+                    {
+                        Message = "Token Validation Has Failed. Request Access Denied"
+                    };
+                    await context.Response.WriteAsJsonAsync(response);
+                }
+
+            });
+
+            app.UseMiddleware<JwtMiddleware>();
 
             // phuc hoi thong tin dang nhap (xac thuc)
             app.UseAuthentication();

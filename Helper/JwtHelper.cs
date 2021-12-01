@@ -38,7 +38,7 @@ namespace quiz_app_dotnet_api.Helper
 
             var claim = new[]{
                 new Claim("Id", user.Id.ToString()),
-                new Claim("Username", user.UserName),
+                new Claim("UserName", user.UserName),
                 new Claim("Role", user.Role == null ? "" : user.Role)
             };
 
@@ -46,6 +46,7 @@ namespace quiz_app_dotnet_api.Helper
             var token = new JwtSecurityToken(
                 issuer: _config["JWT:Issuer"],
                 audience: _config["JWT:Audience"],
+                notBefore: DateTime.Now,
                 expires: DateTime.Now.AddHours(1),
                 signingCredentials: signingCredentials,
                 claims: claim
