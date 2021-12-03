@@ -8,7 +8,7 @@ using quiz_app_dotnet_api.Services;
 
 namespace quiz_app_dotnet_api.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "User")]
     public class CourseQuizController : BaseApiController
     {
         private readonly CourseQuizService _courseQuizService;
@@ -20,6 +20,7 @@ namespace quiz_app_dotnet_api.Controllers
             _courseQuiz = courseQuiz;
         }
         [HttpGet]
+        [AllowAnonymous]
         public ActionResult<List<CourseQuiz>> GetAll()
         {
             return Ok(_courseQuizService.GetAll());

@@ -9,7 +9,6 @@ namespace quiz_app_dotnet_api.Controllers
 {
     [ApiController]
     [Route("/api/[controller]")]
-    [EnableCors("AllowAll")]
     public class BaseApiController : ControllerBase
     {
     }

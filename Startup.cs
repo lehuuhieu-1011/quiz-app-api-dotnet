@@ -63,6 +63,7 @@ namespace quiz_app_dotnet_api
                     RoleClaimType = "Role" // important
                 };
             });
+            services.AddCors();
             services.AddControllers();
 
             services.AddSwaggerGen(c =>
@@ -135,7 +136,6 @@ namespace quiz_app_dotnet_api
             services.AddTransient<QuestionQuizService, QuestionQuizService>();
 
             // enable cors
-            services.AddCors(options => options.AddPolicy("AllowAll", p => p.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
 
         }
 
@@ -176,7 +176,7 @@ namespace quiz_app_dotnet_api
             app.UseAuthorization();
 
             // enable cors
-            app.UseCors("AllowAll");
+            app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
             app.UseEndpoints(endpoints =>
             {
