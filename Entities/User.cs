@@ -21,5 +21,6 @@ namespace quiz_app_dotnet_api.Entities
         public string Email { get; set; }
         public string Password { get; set; }
         public string Role { get; set; }
+        public IList<StorageScores> Scores { get; } = new List<StorageScores>();
     }
 }

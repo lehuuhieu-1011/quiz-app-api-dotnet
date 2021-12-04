@@ -2,13 +2,15 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.ResponseCaching;
 using quiz_app_dotnet_api.Entities;
+using quiz_app_dotnet_api.Modals;
 using quiz_app_dotnet_api.Repositories;
 using quiz_app_dotnet_api.Services;
 
 namespace quiz_app_dotnet_api.Controllers
 {
-    [Authorize(Roles = "User")]
+    // [Authorize(Roles = "User")]
     public class CourseQuizController : BaseApiController
     {
         private readonly CourseQuizService _courseQuizService;
@@ -21,26 +23,38 @@ namespace quiz_app_dotnet_api.Controllers
         }
         [HttpGet]
         [AllowAnonymous]
-        public ActionResult<List<CourseQuiz>> GetAll()
+        public ActionResult GetAll()
         {
             return Ok(_courseQuizService.GetAll());
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<CourseQuiz>> GetById(int id)
+        public async Task<ActionResult> GetById(int id)
         {
-            CourseQuiz course = await _courseQuizService.GetById(id);
-            if (course == null)
+            CourseQuiz response = await _courseQuizService.GetById(id);
+            if (response == null)
             {
                 return NotFound();
             }
+            ResponseCourseQuizModal course = new ResponseCourseQuizModal
+            {
+                Id = response.Id,
+                Image = response.image,
+                Name = response.name
+            };
             return Ok(course);
         }
 
         [HttpPost]
-        public async Task<ActionResult<CourseQuiz>> CreateCourse(CourseQuiz course)
+        public async Task<ActionResult> CreateCourse(CourseQuiz newCourse)
         {
-            await _courseQuizService.CreateCourse(course);
+            CourseQuiz response = await _courseQuizService.CreateCourse(newCourse);
+            ResponseCourseQuizModal course = new ResponseCourseQuizModal
+            {
+                Id = response.Id,
+                Image = response.image,
+                Name = response.name
+            };
             return CreatedAtAction(nameof(GetById), new { id = course.Id }, course);
         }
 

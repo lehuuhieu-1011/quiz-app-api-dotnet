@@ -7,12 +7,13 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using quiz_app_dotnet_api.Entities;
+using quiz_app_dotnet_api.Modals;
 using quiz_app_dotnet_api.Repositories;
 using quiz_app_dotnet_api.Services;
 
 namespace quiz_app_dotnet_api.Controllers
 {
-    [Authorize(Roles = "User")]
+    // [Authorize(Roles = "User")]
     public class QuestionQuizController : BaseApiController
     {
         private readonly QuestionQuizService _service;
@@ -33,19 +34,43 @@ namespace quiz_app_dotnet_api.Controllers
         [HttpGet("{id}")]
         public ActionResult<QuestionQuiz> GetById(int id)
         {
-            QuestionQuiz question = _service.GetById(id);
-            if (question == null)
+            QuestionQuiz response = _service.GetById(id);
+            if (response == null)
             {
                 return NotFound();
             }
+            ResponseQuestionQuizModal question = new ResponseQuestionQuizModal
+            {
+                Id = response.id,
+                Question = response.question,
+                AnswerA = response.answerA,
+                AnswerB = response.answerB,
+                AnswerC = response.answerC,
+                AnswerD = response.answerC,
+                CorrectAnswer = response.correctAnswer,
+                Image = response.image,
+                CourseId = response.courseId
+            };
             return Ok(question);
         }
 
         [HttpPost]
-        public async Task<ActionResult<QuestionQuiz>> CreateQuestion(QuestionQuiz question)
+        public async Task<ActionResult<QuestionQuiz>> CreateQuestion(QuestionQuiz newQuestion)
         {
-            await _service.CreateQuestion(question);
-            return CreatedAtAction(nameof(GetById), new { id = question.id }, question);
+            QuestionQuiz response = await _service.CreateQuestion(newQuestion);
+            ResponseQuestionQuizModal question = new ResponseQuestionQuizModal
+            {
+                Id = response.id,
+                Question = response.question,
+                AnswerA = response.answerA,
+                AnswerB = response.answerB,
+                AnswerC = response.answerC,
+                AnswerD = response.answerC,
+                CorrectAnswer = response.correctAnswer,
+                Image = response.image,
+                CourseId = response.courseId
+            };
+            return CreatedAtAction(nameof(GetById), new { id = question.Id }, question);
         }
 
         [HttpPut("{id}")]
@@ -71,14 +96,14 @@ namespace quiz_app_dotnet_api.Controllers
         }
 
         [HttpGet("/api/GetAllQuestionByIdCourse/{id}")]
-        public async Task<ActionResult<List<QuestionQuiz>>> GetQuestionByIdCourse(int id)
+        public async Task<ActionResult> GetQuestionByIdCourse(int id)
         {
             List<QuestionQuiz> questions = await _service.GetQuestionByIdCourse(id);
             if (questions == null)
             {
                 return BadRequest();
             }
-            return questions;
+            return Ok(questions);
         }
 
 

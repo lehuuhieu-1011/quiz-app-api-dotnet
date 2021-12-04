@@ -2,8 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text.Json.Serialization;
 
 namespace quiz_app_dotnet_api.Entities
 {
@@ -18,6 +17,7 @@ namespace quiz_app_dotnet_api.Entities
         public string name { get; set; }
         [Column("image")]
         public string image { get; set; }
-        // public virtual ICollection<QuestionQuiz> QuestionQuiz { get; set; }
+        public StorageScores StorageScores { get; set; }
+        public IList<QuestionQuiz> QuestionQuiz { get; } = new List<QuestionQuiz>();
     }
 }

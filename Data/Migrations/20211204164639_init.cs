@@ -64,10 +64,48 @@ namespace quiz_app_dotnet_api.Data.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "storage_scores",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Scores = table.Column<int>(type: "int", nullable: false),
+                    TimeSubmit = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CourseQuizId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_storage_scores", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_storage_scores_course_quiz_CourseQuizId",
+                        column: x => x.CourseQuizId,
+                        principalTable: "course_quiz",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_storage_scores_user_UserId",
+                        column: x => x.UserId,
+                        principalTable: "user",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_question_quiz_course_id",
                 table: "question_quiz",
                 column: "course_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_storage_scores_CourseQuizId",
+                table: "storage_scores",
+                column: "CourseQuizId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_storage_scores_UserId",
+                table: "storage_scores",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_user_UserName",
@@ -81,10 +119,13 @@ namespace quiz_app_dotnet_api.Data.Migrations
                 name: "question_quiz");
 
             migrationBuilder.DropTable(
-                name: "user");
+                name: "storage_scores");
 
             migrationBuilder.DropTable(
                 name: "course_quiz");
+
+            migrationBuilder.DropTable(
+                name: "user");
         }
     }
 }

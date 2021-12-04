@@ -16,12 +16,17 @@ namespace quiz_app_dotnet_api.Data
         public DbSet<CourseQuiz> CourseQuizs { get; set; }
         public DbSet<QuestionQuiz> QuestionQuizs { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<StorageScores> StorageScores { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.UserName);
+        }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.EnableSensitiveDataLogging();
         }
     }
 }

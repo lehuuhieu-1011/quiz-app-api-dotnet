@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Runtime.Serialization.Formatters;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -65,6 +66,8 @@ namespace quiz_app_dotnet_api
             });
             services.AddCors();
             services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson(x =>
+                 x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
             services.AddSwaggerGen(c =>
             {
@@ -134,8 +137,8 @@ namespace quiz_app_dotnet_api
             services.AddTransient<CourseQuizService, CourseQuizService>();
             services.AddTransient<IQuestionQuizRepository<QuestionQuiz>, QuestionQuizRepository>();
             services.AddTransient<QuestionQuizService, QuestionQuizService>();
-
-            // enable cors
+            services.AddTransient<IStorageScoresRepository<StorageScores>, StorageScoresRepository>();
+            services.AddTransient<StorageScoresService, StorageScoresService>();
 
         }
 

@@ -30,11 +30,20 @@ namespace quiz_app_dotnet_api.Controllers
         [HttpGet("{username}")]
         public IActionResult GetByUserName(string username)
         {
-            User user = _service.GetByUserName(username);
-            if (user == null)
+            User response = _service.GetByUserName(username);
+            if (response == null)
             {
                 return NotFound();
             }
+            ResponseUserModal user = new ResponseUserModal
+            {
+                Id = response.Id,
+                UserName = response.UserName,
+                Email = response.Email,
+                FullName = response.FullName,
+                Password = response.Password,
+                Role = response.Role
+            };
             return Ok(user);
         }
 

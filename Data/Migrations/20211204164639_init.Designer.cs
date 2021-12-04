@@ -10,7 +10,7 @@ using quiz_app_dotnet_api.Data;
 namespace quiz_app_dotnet_api.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20211130080623_init")]
+    [Migration("20211204164639_init")]
     partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -93,6 +93,34 @@ namespace quiz_app_dotnet_api.Data.Migrations
                     b.ToTable("question_quiz");
                 });
 
+            modelBuilder.Entity("quiz_app_dotnet_api.Entities.StorageScores", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("CourseQuizId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Scores")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TimeSubmit")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CourseQuizId")
+                        .IsUnique();
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("storage_scores");
+                });
+
             modelBuilder.Entity("quiz_app_dotnet_api.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
@@ -124,12 +152,43 @@ namespace quiz_app_dotnet_api.Data.Migrations
             modelBuilder.Entity("quiz_app_dotnet_api.Entities.QuestionQuiz", b =>
                 {
                     b.HasOne("quiz_app_dotnet_api.Entities.CourseQuiz", "course")
-                        .WithMany()
+                        .WithMany("QuestionQuiz")
                         .HasForeignKey("courseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("course");
+                });
+
+            modelBuilder.Entity("quiz_app_dotnet_api.Entities.StorageScores", b =>
+                {
+                    b.HasOne("quiz_app_dotnet_api.Entities.CourseQuiz", "CourseQuiz")
+                        .WithOne("StorageScores")
+                        .HasForeignKey("quiz_app_dotnet_api.Entities.StorageScores", "CourseQuizId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("quiz_app_dotnet_api.Entities.User", "User")
+                        .WithMany("Scores")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CourseQuiz");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("quiz_app_dotnet_api.Entities.CourseQuiz", b =>
+                {
+                    b.Navigation("QuestionQuiz");
+
+                    b.Navigation("StorageScores");
+                });
+
+            modelBuilder.Entity("quiz_app_dotnet_api.Entities.User", b =>
+                {
+                    b.Navigation("Scores");
                 });
 #pragma warning restore 612, 618
         }
