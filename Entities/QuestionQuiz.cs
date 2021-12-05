@@ -3,10 +3,7 @@ using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Common;
-using System.Linq;
-using System.Runtime;
-using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace quiz_app_dotnet_api.Entities
 {
@@ -35,6 +32,7 @@ namespace quiz_app_dotnet_api.Entities
         public float point { get; set; }
         [Column("course_id")]
         public int courseId { get; set; }
+        [JsonIgnore]
         public CourseQuiz course { get; set; }
     }
 }

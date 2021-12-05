@@ -55,31 +55,43 @@ namespace quiz_app_dotnet_api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<QuestionQuiz>> CreateQuestion(QuestionQuiz newQuestion)
+        public async Task<ActionResult> CreateQuestion(ResponseQuestionQuizModal newQuestion)
         {
-            QuestionQuiz response = await _service.CreateQuestion(newQuestion);
-            ResponseQuestionQuizModal question = new ResponseQuestionQuizModal
+            QuestionQuiz question = new QuestionQuiz
             {
-                Id = response.id,
-                Question = response.question,
-                AnswerA = response.answerA,
-                AnswerB = response.answerB,
-                AnswerC = response.answerC,
-                AnswerD = response.answerC,
-                CorrectAnswer = response.correctAnswer,
-                Image = response.image,
-                CourseId = response.courseId
+                id = newQuestion.Id,
+                question = newQuestion.Question,
+                answerA = newQuestion.AnswerA,
+                answerB = newQuestion.AnswerB,
+                answerC = newQuestion.AnswerC,
+                answerD = newQuestion.AnswerC,
+                correctAnswer = newQuestion.CorrectAnswer,
+                image = newQuestion.Image,
+                courseId = newQuestion.CourseId
             };
-            return CreatedAtAction(nameof(GetById), new { id = question.Id }, question);
+            QuestionQuiz response = await _service.CreateQuestion(question);
+            return CreatedAtAction(nameof(GetById), new { id = response.id }, response);
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateQuestion(int id, QuestionQuiz question)
+        public async Task<ActionResult> UpdateQuestion(int id, ResponseQuestionQuizModal updateQuestion)
         {
-            if (id != question.id)
+            if (id != updateQuestion.Id)
             {
                 return BadRequest();
             }
+            QuestionQuiz question = new QuestionQuiz
+            {
+                id = updateQuestion.Id,
+                question = updateQuestion.Question,
+                answerA = updateQuestion.AnswerA,
+                answerB = updateQuestion.AnswerB,
+                answerC = updateQuestion.AnswerC,
+                answerD = updateQuestion.AnswerD,
+                correctAnswer = updateQuestion.CorrectAnswer,
+                image = updateQuestion.Image,
+                point = updateQuestion.Point
+            };
             await _service.UpdateQuestion(question);
             return NoContent();
         }

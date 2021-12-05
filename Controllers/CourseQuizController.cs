@@ -46,25 +46,31 @@ namespace quiz_app_dotnet_api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> CreateCourse(CourseQuiz newCourse)
+        public async Task<ActionResult> CreateCourse(ResponseCourseQuizModal newCourse)
         {
-            CourseQuiz response = await _courseQuizService.CreateCourse(newCourse);
-            ResponseCourseQuizModal course = new ResponseCourseQuizModal
+            CourseQuiz course = new CourseQuiz
             {
-                Id = response.Id,
-                Image = response.image,
-                Name = response.name
+                Id = newCourse.Id,
+                name = newCourse.Name,
+                image = newCourse.Image,
             };
-            return CreatedAtAction(nameof(GetById), new { id = course.Id }, course);
+            CourseQuiz response = await _courseQuizService.CreateCourse(course);
+            return CreatedAtAction(nameof(GetById), new { id = response.Id }, response);
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateCourse(int id, CourseQuiz course)
+        public async Task<ActionResult> UpdateCourse(int id, ResponseCourseQuizModal updateCourse)
         {
-            if (id != course.Id)
+            if (id != updateCourse.Id)
             {
                 return BadRequest();
             }
+            CourseQuiz course = new CourseQuiz
+            {
+                Id = updateCourse.Id,
+                name = updateCourse.Name,
+                image = updateCourse.Image,
+            };
             await _courseQuizService.UpdateCourse(course);
             return NoContent();
         }

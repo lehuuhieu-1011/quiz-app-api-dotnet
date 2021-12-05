@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace quiz_app_dotnet_api.Entities
 {
@@ -17,7 +17,9 @@ namespace quiz_app_dotnet_api.Entities
         public string name { get; set; }
         [Column("image")]
         public string image { get; set; }
+        [JsonIgnore]
         public StorageScores StorageScores { get; set; }
+        [JsonIgnore]
         public IList<QuestionQuiz> QuestionQuiz { get; } = new List<QuestionQuiz>();
     }
 }
