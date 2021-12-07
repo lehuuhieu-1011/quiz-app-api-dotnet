@@ -111,7 +111,7 @@ namespace quiz_app_dotnet_api.Controllers
             return NoContent();
         }
 
-        [Authorize(Roles = "User")]
+        [Authorize(Roles = "User, Admin")]
         [HttpGet("/api/GetAllQuestionByIdCourse/{id}")]
         public async Task<ActionResult> GetQuestionByIdCourse(int id)
         {

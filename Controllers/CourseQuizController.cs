@@ -27,7 +27,7 @@ namespace quiz_app_dotnet_api.Controllers
             return Ok(_courseQuizService.GetAll());
         }
 
-        [Authorize(Roles = "User")]
+        [Authorize(Roles = "User, Admin")]
         [HttpGet("{id:int}")]
         public async Task<ActionResult> GetById(int id)
         {
