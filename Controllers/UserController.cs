@@ -51,7 +51,15 @@ namespace quiz_app_dotnet_api.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(RegisterModal registerModal)
         {
-            var response = await _service.Register(registerModal);
+            var user = new User
+            {
+                UserName = registerModal.UserName,
+                FullName = registerModal.FullName,
+                Email = registerModal.Email,
+                Password = registerModal.Password,
+                Role = "User"
+            };
+            var response = await _service.Register(user);
             if (response == null)
             {
                 return BadRequest(response);

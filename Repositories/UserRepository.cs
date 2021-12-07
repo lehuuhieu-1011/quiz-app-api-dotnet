@@ -51,14 +51,9 @@ namespace quiz_app_dotnet_api.Repositories
             return null;
         }
 
-        public async Task<User> Register(RegisterModal registerModal)
+        public async Task<User> Register(User user)
         {
-            var user = new User
-            {
-                UserName = registerModal.UserName,
-                Password = registerModal.Password
-            };
-            bool checkUser = _context.Users.Any(u => u.UserName == registerModal.UserName);
+            bool checkUser = _context.Users.Any(u => u.UserName == user.UserName);
             if (checkUser)
             {
                 return null;

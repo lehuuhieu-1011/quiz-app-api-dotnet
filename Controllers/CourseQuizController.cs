@@ -10,7 +10,6 @@ using quiz_app_dotnet_api.Services;
 
 namespace quiz_app_dotnet_api.Controllers
 {
-    // [Authorize(Roles = "User")]
     public class CourseQuizController : BaseApiController
     {
         private readonly CourseQuizService _courseQuizService;
@@ -28,6 +27,7 @@ namespace quiz_app_dotnet_api.Controllers
             return Ok(_courseQuizService.GetAll());
         }
 
+        [Authorize(Roles = "User")]
         [HttpGet("{id:int}")]
         public async Task<ActionResult> GetById(int id)
         {
@@ -45,6 +45,7 @@ namespace quiz_app_dotnet_api.Controllers
             return Ok(course);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult> CreateCourse(ResponseCourseQuizModal newCourse)
         {
@@ -58,6 +59,7 @@ namespace quiz_app_dotnet_api.Controllers
             return CreatedAtAction(nameof(GetById), new { id = response.Id }, response);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateCourse(int id, ResponseCourseQuizModal updateCourse)
         {
@@ -75,6 +77,7 @@ namespace quiz_app_dotnet_api.Controllers
             return NoContent();
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteCourse(int id)
         {

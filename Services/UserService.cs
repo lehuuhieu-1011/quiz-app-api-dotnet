@@ -17,9 +17,9 @@ namespace quiz_app_dotnet_api.Services
             _repo = repo;
         }
 
-        public async Task<User> Register(RegisterModal registerModal)
+        public async Task<User> Register(User user)
         {
-            return await _repo.Register(registerModal);
+            return await _repo.Register(user);
         }
         public UserLoginResponse Login(LoginModal loginModal)
         {

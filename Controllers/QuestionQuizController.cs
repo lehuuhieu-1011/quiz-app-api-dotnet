@@ -13,7 +13,6 @@ using quiz_app_dotnet_api.Services;
 
 namespace quiz_app_dotnet_api.Controllers
 {
-    // [Authorize(Roles = "User")]
     public class QuestionQuizController : BaseApiController
     {
         private readonly QuestionQuizService _service;
@@ -25,12 +24,14 @@ namespace quiz_app_dotnet_api.Controllers
             _repo = repo;
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<ActionResult<List<QuestionQuiz>>> GetAll()
         {
             return Ok(await _service.GetAll());
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet("{id}")]
         public ActionResult<QuestionQuiz> GetById(int id)
         {
@@ -54,6 +55,7 @@ namespace quiz_app_dotnet_api.Controllers
             return Ok(question);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult> CreateQuestion(ResponseQuestionQuizModal newQuestion)
         {
@@ -73,6 +75,7 @@ namespace quiz_app_dotnet_api.Controllers
             return CreatedAtAction(nameof(GetById), new { id = response.id }, response);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateQuestion(int id, ResponseQuestionQuizModal updateQuestion)
         {
@@ -96,6 +99,7 @@ namespace quiz_app_dotnet_api.Controllers
             return NoContent();
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteQuestion(int id)
         {
@@ -107,6 +111,7 @@ namespace quiz_app_dotnet_api.Controllers
             return NoContent();
         }
 
+        [Authorize(Roles = "User")]
         [HttpGet("/api/GetAllQuestionByIdCourse/{id}")]
         public async Task<ActionResult> GetQuestionByIdCourse(int id)
         {
