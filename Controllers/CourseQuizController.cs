@@ -73,7 +73,11 @@ namespace quiz_app_dotnet_api.Controllers
                 name = updateCourse.Name,
                 image = updateCourse.Image,
             };
-            await _courseQuizService.UpdateCourse(course);
+            bool check = await _courseQuizService.UpdateCourse(course);
+            if (!check)
+            {
+                return NotFound();
+            }
             return NoContent();
         }
 

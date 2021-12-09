@@ -66,14 +66,12 @@ namespace quiz_app_dotnet_api.Repositories
 
         public async Task<bool> UpdateQuestion(QuestionQuiz newQuestion)
         {
-            // _context.QuestionQuizs.Update(newQuestion);
-            // await _context.SaveChangesAsync();
-            // return true;
-            var question = await _context.QuestionQuizs.FindAsync(newQuestion.id);
+            var question = _context.QuestionQuizs.AsNoTracking().FirstOrDefault(x => x.id == newQuestion.id);
             if (question == null)
             {
                 return false;
             }
+            // _context.Entry(question).CurrentValues.SetValues(newQuestion);
 
             _context.QuestionQuizs.Update(newQuestion);
             await _context.SaveChangesAsync();

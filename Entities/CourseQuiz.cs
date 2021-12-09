@@ -20,6 +20,6 @@ namespace quiz_app_dotnet_api.Entities
         [JsonIgnore]
         public StorageScores StorageScores { get; set; }
         [JsonIgnore]
-        public IList<QuestionQuiz> QuestionQuiz { get; } = new List<QuestionQuiz>();
+        public virtual IList<QuestionQuiz> QuestionQuiz { get; } = new List<QuestionQuiz>();
     }
 }

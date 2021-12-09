@@ -51,10 +51,16 @@ namespace quiz_app_dotnet_api.Repositories
             return course;
         }
 
-        public async Task UpdateCourse(CourseQuiz newCourse)
+        public async Task<bool> UpdateCourse(CourseQuiz newCourse)
         {
+            CourseQuiz course = _context.CourseQuizs.AsNoTracking().FirstOrDefault(x => x.Id == newCourse.Id);
+            if (course == null)
+            {
+                return false;
+            }
             _context.CourseQuizs.Update(newCourse);
             await _context.SaveChangesAsync();
+            return true;
         }
     }
 }

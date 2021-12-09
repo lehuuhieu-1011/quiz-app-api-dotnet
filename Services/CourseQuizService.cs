@@ -32,9 +32,9 @@ namespace quiz_app_dotnet_api.Services
             return await _repo.CreateCourse(course);
         }
 
-        public async Task UpdateCourse(CourseQuiz newCourse)
+        public async Task<bool> UpdateCourse(CourseQuiz newCourse)
         {
-            await _repo.UpdateCourse(newCourse);
+            return await _repo.UpdateCourse(newCourse);
         }
 
         public async Task<bool> DeleteCourse(int id)

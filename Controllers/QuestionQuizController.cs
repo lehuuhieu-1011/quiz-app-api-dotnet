@@ -94,9 +94,14 @@ namespace quiz_app_dotnet_api.Controllers
                 answerD = updateQuestion.AnswerD,
                 correctAnswer = updateQuestion.CorrectAnswer,
                 image = updateQuestion.Image,
-                point = updateQuestion.Point
+                point = updateQuestion.Point,
+                courseId = updateQuestion.CourseId
             };
-            await _service.UpdateQuestion(question);
+            bool check = await _service.UpdateQuestion(question);
+            if (!check)
+            {
+                return NotFound();
+            }
             return NoContent();
         }
 

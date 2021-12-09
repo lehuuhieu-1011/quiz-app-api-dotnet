@@ -33,6 +33,6 @@ namespace quiz_app_dotnet_api.Entities
         [Column("course_id")]
         public int courseId { get; set; }
         [JsonIgnore]
-        public CourseQuiz course { get; set; }
+        public virtual CourseQuiz course { get; set; }
     }
 }

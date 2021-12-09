@@ -11,7 +11,7 @@ namespace quiz_app_dotnet_api.Repositories
         List<CourseQuiz> GetAll();
         Task<CourseQuiz> GetById(int id);
         Task<CourseQuiz> CreateCourse(CourseQuiz course);
-        Task UpdateCourse(CourseQuiz newCourse);
+        Task<bool> UpdateCourse(CourseQuiz newCourse);
         Task<bool> DeleteCourse(int id);
     }
 }

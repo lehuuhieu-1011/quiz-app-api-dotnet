@@ -17,8 +17,8 @@ namespace quiz_app_dotnet_api.Entities
         public int Scores { get; set; }
         public string TimeSubmit { get; set; }
         public Guid UserId { get; set; }
-        public User User { get; set; }
+        public virtual User User { get; set; }
         public int CourseQuizId { get; set; }
-        public CourseQuiz CourseQuiz { get; set; }
+        public virtual CourseQuiz CourseQuiz { get; set; }
     }
 }
