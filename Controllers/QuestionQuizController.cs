@@ -50,6 +50,7 @@ namespace quiz_app_dotnet_api.Controllers
                 AnswerD = response.answerC,
                 CorrectAnswer = response.correctAnswer,
                 Image = response.image,
+                Point = response.point,
                 CourseId = response.courseId
             };
             return Ok(question);
