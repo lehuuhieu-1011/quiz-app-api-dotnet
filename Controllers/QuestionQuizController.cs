@@ -69,6 +69,7 @@ namespace quiz_app_dotnet_api.Controllers
                 answerC = newQuestion.AnswerC,
                 answerD = newQuestion.AnswerC,
                 correctAnswer = newQuestion.CorrectAnswer,
+                point = newQuestion.Point,
                 image = newQuestion.Image,
                 courseId = newQuestion.CourseId
             };
