@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using System.Reflection.Metadata.Ecma335;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Distributed;
+using Newtonsoft.Json;
 using quiz_app_dotnet_api.Entities;
 using quiz_app_dotnet_api.Modals;
 using quiz_app_dotnet_api.Repositories;
@@ -17,23 +20,47 @@ namespace quiz_app_dotnet_api.Controllers
     {
         private readonly QuestionQuizService _service;
         private readonly IQuestionQuizRepository<QuestionQuiz> _repo;
+        private readonly IDistributedCache _distributedCache;
 
-        public QuestionQuizController(QuestionQuizService service, IQuestionQuizRepository<QuestionQuiz> repo)
+        public QuestionQuizController(QuestionQuizService service, IQuestionQuizRepository<QuestionQuiz> repo, IDistributedCache distributedCache)
         {
             _service = service;
             _repo = repo;
+            _distributedCache = distributedCache;
         }
 
         [Authorize(Roles = "Admin")]
         [HttpGet]
-        public async Task<ActionResult<List<QuestionQuiz>>> GetAll()
+        public async Task<ActionResult> GetAll()
         {
-            return Ok(await _service.GetAll());
+            // https://codewithmukesh.com/blog/redis-caching-in-aspnet-core/
+
+            var cacheKey = "listQuestion";
+            string serializedListQuestion;
+            var listQuestion = new List<QuestionQuiz>();
+            var redisListQuestion = await _distributedCache.GetAsync(cacheKey);
+            if (redisListQuestion != null)
+            {
+                serializedListQuestion = Encoding.UTF8.GetString(redisListQuestion);
+                listQuestion = JsonConvert.DeserializeObject<List<QuestionQuiz>>(serializedListQuestion);
+            }
+            else
+            {
+                listQuestion = await _service.GetAll();
+                serializedListQuestion = JsonConvert.SerializeObject(listQuestion);
+                redisListQuestion = Encoding.UTF8.GetBytes(serializedListQuestion);
+                var options = new DistributedCacheEntryOptions()
+                    .SetAbsoluteExpiration(DateTime.Now.AddMinutes(10))
+                    .SetSlidingExpiration(TimeSpan.FromMinutes(2));
+                await _distributedCache.SetAsync(cacheKey, redisListQuestion, options);
+            }
+
+            return Ok(listQuestion);
         }
 
         [Authorize(Roles = "Admin")]
         [HttpGet("{id}")]
-        public ActionResult<QuestionQuiz> GetById(int id)
+        public ActionResult GetById(int id)
         {
             QuestionQuiz response = _service.GetById(id);
             if (response == null)
