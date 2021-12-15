@@ -38,21 +38,29 @@ namespace quiz_app_dotnet_api.Controllers
             var cacheKey = "listQuestion";
             string serializedListQuestion;
             var listQuestion = new List<QuestionQuiz>();
-            var redisListQuestion = await _distributedCache.GetAsync(cacheKey);
-            if (redisListQuestion != null)
+            try
             {
-                serializedListQuestion = Encoding.UTF8.GetString(redisListQuestion);
-                listQuestion = JsonConvert.DeserializeObject<List<QuestionQuiz>>(serializedListQuestion);
+                var redisListQuestion = await _distributedCache.GetAsync(cacheKey);
+                if (redisListQuestion != null)
+                {
+                    serializedListQuestion = Encoding.UTF8.GetString(redisListQuestion);
+                    listQuestion = JsonConvert.DeserializeObject<List<QuestionQuiz>>(serializedListQuestion);
+                }
+                else
+                {
+                    listQuestion = await _service.GetAll();
+                    serializedListQuestion = JsonConvert.SerializeObject(listQuestion);
+                    redisListQuestion = Encoding.UTF8.GetBytes(serializedListQuestion);
+                    var options = new DistributedCacheEntryOptions()
+                        .SetAbsoluteExpiration(DateTime.Now.AddMinutes(10))
+                        .SetSlidingExpiration(TimeSpan.FromMinutes(2));
+                    await _distributedCache.SetAsync(cacheKey, redisListQuestion, options);
+                }
             }
-            else
+            catch (Exception e)
             {
-                listQuestion = await _service.GetAll();
-                serializedListQuestion = JsonConvert.SerializeObject(listQuestion);
-                redisListQuestion = Encoding.UTF8.GetBytes(serializedListQuestion);
-                var options = new DistributedCacheEntryOptions()
-                    .SetAbsoluteExpiration(DateTime.Now.AddMinutes(10))
-                    .SetSlidingExpiration(TimeSpan.FromMinutes(2));
-                await _distributedCache.SetAsync(cacheKey, redisListQuestion, options);
+                Console.WriteLine(e);
+                return BadRequest(new { message = "Can't connection to Redis" });
             }
 
             return Ok(listQuestion);
