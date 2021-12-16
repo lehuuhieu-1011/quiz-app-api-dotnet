@@ -13,13 +13,10 @@ RUN dotnet restore "quiz-app-dotnet-api.csproj"
 
 # copy everything else and build app
 COPY . .
-RUN dotnet build "quiz-app-dotnet-api.csproj" -c Release -o /app/build
-
-FROM build AS publish
 RUN dotnet publish "quiz-app-dotnet-api.csproj" -c Release -o /app/publish
 
 # final stage/image
 FROM base AS final
 WORKDIR /app
-COPY --from=publish /app/publish .
+COPY --from=build /app/publish .
 ENTRYPOINT ["dotnet", "quiz-app-dotnet-api.dll"]
