@@ -142,7 +142,7 @@ namespace quiz_app_dotnet_api
 
             services.AddStackExchangeRedisCache(options =>
             {
-                options.Configuration = "localhost:6379";
+                options.Configuration = "redis_image:6379";
             });
 
         }
