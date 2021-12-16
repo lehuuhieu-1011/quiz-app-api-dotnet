@@ -6,12 +6,15 @@ ASP.NET 5
 
 ## Usage
 
-#### Run Server Redis
+-   Download [Docker](https://www.docker.com/get-started)
 
-```
-docker pull redis
-docker run --name myredis -p 6379:6379 -d redis
-```
+-   Clone the Repo : `git clone https://github.com/lehuuhieu-1011/quiz-app-api-dotnet.git`
+
+-   Change directory: `cd quiz-app-api-dotnet`
+
+-   Build and run application: `docker-compose up`
+
+-   Stop application, removing the containers entirely: `docker-compose down`
 
 ## Note
 
@@ -32,3 +35,5 @@ docker run --name myredis -p 6379:6379 -d redis
 `docker rm myredis` : remove container
 
 `docker rmi redis` : remove image
+
+`docker run --name myredis -p 6379:6379 -d redis` : start server redis
