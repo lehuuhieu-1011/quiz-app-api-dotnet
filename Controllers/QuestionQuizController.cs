@@ -20,13 +20,11 @@ namespace quiz_app_dotnet_api.Controllers
     public class QuestionQuizController : BaseApiController
     {
         private readonly QuestionQuizService _service;
-        private readonly IQuestionQuizRepository<QuestionQuiz> _repo;
         private readonly IDistributedCache _distributedCache;
 
-        public QuestionQuizController(QuestionQuizService service, IQuestionQuizRepository<QuestionQuiz> repo, IDistributedCache distributedCache)
+        public QuestionQuizController(QuestionQuizService service, IDistributedCache distributedCache)
         {
             _service = service;
-            _repo = repo;
             _distributedCache = distributedCache;
         }
 

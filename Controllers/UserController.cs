@@ -19,16 +19,14 @@ namespace quiz_app_dotnet_api.Controllers
     public class UserController : BaseApiController
     {
         private readonly UserService _service;
-        private readonly IUserRepository<User> _repo;
 
-        public UserController(UserService service, IUserRepository<User> repo)
+        public UserController(UserService service)
         {
             _service = service;
-            _repo = repo;
         }
 
         [HttpGet("{username}")]
-        public IActionResult GetByUserName(string username)
+        public ActionResult GetByUserName(string username)
         {
             User response = _service.GetByUserName(username);
             if (response == null)
@@ -49,7 +47,7 @@ namespace quiz_app_dotnet_api.Controllers
 
         [Route("Register")]
         [HttpPost]
-        public async Task<IActionResult> Register(RegisterModal registerModal)
+        public async Task<ActionResult> Register(RegisterModal registerModal)
         {
             var user = new User
             {
