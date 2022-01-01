@@ -12,26 +12,24 @@ namespace quiz_app_dotnet_api.Controllers
 {
     public class CourseQuizController : BaseApiController
     {
-        private readonly CourseQuizService _courseQuizService;
-        private readonly ICourseQuizRepository<CourseQuiz> _courseQuiz;
+        private readonly CourseQuizService _service;
 
-        public CourseQuizController(ICourseQuizRepository<CourseQuiz> courseQuiz, CourseQuizService courseQuizService)
+        public CourseQuizController(CourseQuizService service)
         {
-            _courseQuizService = courseQuizService;
-            _courseQuiz = courseQuiz;
+            _service = service;
         }
         [HttpGet]
         [AllowAnonymous]
         public ActionResult GetAll()
         {
-            return Ok(_courseQuizService.GetAll());
+            return Ok(_service.GetAll());
         }
 
         [Authorize(Roles = "User, Admin")]
         [HttpGet("{id:int}")]
         public async Task<ActionResult> GetById(int id)
         {
-            CourseQuiz response = await _courseQuizService.GetById(id);
+            CourseQuiz response = await _service.GetById(id);
             if (response == null)
             {
                 return NotFound();
@@ -55,7 +53,7 @@ namespace quiz_app_dotnet_api.Controllers
                 name = newCourse.Name,
                 image = newCourse.Image,
             };
-            CourseQuiz response = await _courseQuizService.CreateCourse(course);
+            CourseQuiz response = await _service.CreateCourse(course);
             return CreatedAtAction(nameof(GetById), new { id = response.Id }, response);
         }
 
@@ -73,7 +71,7 @@ namespace quiz_app_dotnet_api.Controllers
                 name = updateCourse.Name,
                 image = updateCourse.Image,
             };
-            bool check = await _courseQuizService.UpdateCourse(course);
+            bool check = await _service.UpdateCourse(course);
             if (!check)
             {
                 return NotFound();
@@ -85,7 +83,7 @@ namespace quiz_app_dotnet_api.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteCourse(int id)
         {
-            bool check = await _courseQuizService.DeleteCourse(id);
+            bool check = await _service.DeleteCourse(id);
             if (!check)
             {
                 return NotFound();

@@ -16,11 +16,9 @@ namespace quiz_app_dotnet_api.Controllers
     public class StorageScoresController : BaseApiController
     {
         private readonly StorageScoresService _service;
-        private readonly IStorageScoresRepository<StorageScores> _repo;
-        public StorageScoresController(StorageScoresService service, IStorageScoresRepository<StorageScores> repo)
+        public StorageScoresController(StorageScoresService service)
         {
             _service = service;
-            _repo = repo;
         }
 
         [HttpGet("{id}")]
