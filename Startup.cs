@@ -29,6 +29,7 @@ using quiz_app_dotnet_api.Middlewares;
 using quiz_app_dotnet_api.Modals;
 using quiz_app_dotnet_api.Repositories;
 using quiz_app_dotnet_api.Services;
+using quiz_app_dotnet_api.SignalR;
 
 namespace quiz_app_dotnet_api
 {
@@ -64,7 +65,20 @@ namespace quiz_app_dotnet_api
                     RoleClaimType = "Role" // important
                 };
             });
-            services.AddCors();
+            // services.AddCors();
+
+            // config for signalR
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(builder =>
+                {
+                    builder.WithOrigins("http://localhost:3000", "http://localhost:3001")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials();
+                });
+            });
+
             services.AddControllers();
             services.AddControllers().AddNewtonsoftJson(x =>
                  x.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
@@ -142,6 +156,11 @@ namespace quiz_app_dotnet_api
             services.AddTransient<IRoomRepository<Room>, RoomRepository>();
             services.AddTransient<RoomService, RoomService>();
 
+            services.AddSingleton<IDictionary<string, UserSignalR>>(options => new Dictionary<string, UserSignalR>());
+
+            // config SignalR
+            services.AddSignalR();
+
             services.AddStackExchangeRedisCache(options =>
             {
                 options.Configuration = "redis_image:6379";
@@ -186,11 +205,14 @@ namespace quiz_app_dotnet_api
             app.UseAuthorization();
 
             // enable cors
-            app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+            // app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+            app.UseCors();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                // config SignalR
+                endpoints.MapHub<ChatHub>("/chatHub");
             });
         }
     }
