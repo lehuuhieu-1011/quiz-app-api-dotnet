@@ -14,6 +14,8 @@ using quiz_app_dotnet_api.Entities;
 using quiz_app_dotnet_api.Modals;
 using quiz_app_dotnet_api.Repositories;
 using quiz_app_dotnet_api.Services;
+using StackExchange.Redis;
+using X.PagedList;
 
 namespace quiz_app_dotnet_api.Controllers
 {
@@ -153,7 +155,7 @@ namespace quiz_app_dotnet_api.Controllers
             return NoContent();
         }
 
-        [Authorize(Roles = "User, Admin")]
+        [Authorize(Roles = "Admin, User")]
         [HttpGet("/api/GetAllQuestionByIdCourse/{id}")]
         public async Task<ActionResult> GetQuestionByIdCourse(int id)
         {
@@ -165,6 +167,12 @@ namespace quiz_app_dotnet_api.Controllers
             return Ok(questions);
         }
 
-
+        [AllowAnonymous]
+        [HttpGet("/api/GetAllQuestionByIdCoursePaging/{id}")]
+        public async Task<ActionResult> GetQuestionByIdCoursePaging(int id, [FromQuery] int pageNumber = 1, int pageSize = 1)
+        {
+            List<QuestionQuiz> questions = await _service.GetQuestionByIdCoursePaging(id, pageNumber, pageSize);
+            return Ok(questions);
+        }
     }
 }

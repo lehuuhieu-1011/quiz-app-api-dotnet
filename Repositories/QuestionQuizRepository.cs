@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using quiz_app_dotnet_api.Data;
 using quiz_app_dotnet_api.Entities;
+using X.PagedList;
 
 namespace quiz_app_dotnet_api.Repositories
 {
@@ -62,6 +63,11 @@ namespace quiz_app_dotnet_api.Repositories
                 return null;
             }
             return questions;
+        }
+
+        public async Task<List<QuestionQuiz>> GetQuestionByIdCoursePaging(int id, int pageNumber = 1, int pageSize = 1)
+        {
+            return await _context.QuestionQuizs.OrderBy(q => q.course).Where(q => q.course.Id == id).ToPagedList(pageNumber, pageSize).ToListAsync();
         }
 
         public async Task<bool> UpdateQuestion(QuestionQuiz newQuestion)
