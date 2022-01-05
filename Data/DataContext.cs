@@ -17,7 +17,6 @@ namespace quiz_app_dotnet_api.Data
         public DbSet<QuestionQuiz> QuestionQuizs { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<StorageScores> StorageScores { get; set; }
-        public DbSet<Room> Room { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
