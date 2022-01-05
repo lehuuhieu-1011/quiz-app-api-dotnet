@@ -46,5 +46,10 @@ namespace quiz_app_dotnet_api.Services
         {
             return await _repo.GetQuestionByIdCourse(id);
         }
+
+        public async Task<List<QuestionQuiz>> GetQuestionByIdCoursePaging(int id, int pageNumber = 1, int pageSize = 1)
+        {
+            return await _repo.GetQuestionByIdCoursePaging(id, pageNumber, pageSize);
+        }
     }
 }

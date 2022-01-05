@@ -10,6 +10,7 @@ namespace quiz_app_dotnet_api.Repositories
     {
         Task<List<QuestionQuiz>> GetAll();
         Task<List<QuestionQuiz>> GetQuestionByIdCourse(int id);
+        Task<List<QuestionQuiz>> GetQuestionByIdCoursePaging(int id, int pageNumber, int pageSize);
         QuestionQuiz GetById(int id);
         Task<QuestionQuiz> CreateQuestion(QuestionQuiz question);
         Task<bool> UpdateQuestion(QuestionQuiz question);
