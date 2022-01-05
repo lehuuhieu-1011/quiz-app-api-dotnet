@@ -153,8 +153,6 @@ namespace quiz_app_dotnet_api
             services.AddTransient<QuestionQuizService, QuestionQuizService>();
             services.AddTransient<IStorageScoresRepository<StorageScores>, StorageScoresRepository>();
             services.AddTransient<StorageScoresService, StorageScoresService>();
-            services.AddTransient<IRoomRepository<Room>, RoomRepository>();
-            services.AddTransient<RoomService, RoomService>();
 
             services.AddSingleton<IDictionary<string, UserSignalR>>(options => new Dictionary<string, UserSignalR>());
 
