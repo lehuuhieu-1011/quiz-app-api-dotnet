@@ -91,25 +91,6 @@ namespace quiz_app_dotnet_api.Data.Migrations
                     b.ToTable("question_quiz");
                 });
 
-            modelBuilder.Entity("quiz_app_dotnet_api.Entities.Room", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("CourseId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("RoomId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CourseId");
-
-                    b.ToTable("room");
-                });
-
             modelBuilder.Entity("quiz_app_dotnet_api.Entities.StorageScores", b =>
                 {
                     b.Property<Guid>("Id")
@@ -175,17 +156,6 @@ namespace quiz_app_dotnet_api.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("course");
-                });
-
-            modelBuilder.Entity("quiz_app_dotnet_api.Entities.Room", b =>
-                {
-                    b.HasOne("quiz_app_dotnet_api.Entities.CourseQuiz", "Course")
-                        .WithMany()
-                        .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Course");
                 });
 
             modelBuilder.Entity("quiz_app_dotnet_api.Entities.StorageScores", b =>

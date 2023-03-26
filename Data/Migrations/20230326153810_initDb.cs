@@ -65,26 +65,6 @@ namespace quiz_app_dotnet_api.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "room",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    RoomId = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Disable = table.Column<bool>(type: "bit", nullable: false),
-                    CourseId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_room", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_room_course_quiz_CourseId",
-                        column: x => x.CourseId,
-                        principalTable: "course_quiz",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "storage_scores",
                 columns: table => new
                 {
@@ -117,11 +97,6 @@ namespace quiz_app_dotnet_api.Data.Migrations
                 column: "course_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_room_CourseId",
-                table: "room",
-                column: "CourseId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_storage_scores_CourseQuizId",
                 table: "storage_scores",
                 column: "CourseQuizId",
@@ -142,9 +117,6 @@ namespace quiz_app_dotnet_api.Data.Migrations
         {
             migrationBuilder.DropTable(
                 name: "question_quiz");
-
-            migrationBuilder.DropTable(
-                name: "room");
 
             migrationBuilder.DropTable(
                 name: "storage_scores");
